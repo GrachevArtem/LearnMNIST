@@ -29,7 +29,7 @@ activationFunc <- function(x) {
 
 
 derActivationFunc <- function(x) { 
-
+  
   z <- (1/(1+exp(-x)))*(1-(1/(1 + exp(-x))));
   
   return (z);
@@ -113,9 +113,9 @@ costTotal <- function(net, sample, labels, lambda) {
   n.samples = length(labels);
   cost.error <- costError2(output.last.active, labels);
   regul.val <- costRegul(net, lambda);
-    
+  
   return (cost.error/n.samples + regul.val/n.samples)
-    
+  
 }
 
 
@@ -128,13 +128,13 @@ backProp <- function(net, sample, labels, lambda) {
   
   length.net = length(net)
   net.delta <- net
-
+  
   for(i in 1 : length.net ) {
     net.delta[[i]] <- net.delta[[i]]*0
   }
   
   n.samples <- dim(sample)[1];
-
+  
   
   forward.out <- runAll(net, sample)
   forward.list <- forward.out[[1]]
@@ -154,15 +154,15 @@ backProp <- function(net, sample, labels, lambda) {
       if (i > 1) { 
         cur.output <- forward.list[[i]][i.sample, ] #may be here minus one should be
         cur.output <- cbind( 1, t(cur.output), deparse.level = 0 ); 
-
+        
         delta[[i]] <- t(net[[i]]) %*% (delta[[i + 1]]) * t(derActivationFunc(cur.output))
         
-
+        
         delta[[i]] <- delta[[i]][2:length(delta[[i]])]
-      
+        
       }
       
-
+      
       net.delta[[i]] <- net.delta[[i]] + matrix(delta[[i+1]]) %*% forward.active.list[[i]][i.sample, ]
     }
     
@@ -182,8 +182,5 @@ backProp <- function(net, sample, labels, lambda) {
   return (net.delta)
   
 }
-
-
-
 
 

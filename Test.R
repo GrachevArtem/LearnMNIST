@@ -11,7 +11,7 @@ testModel <- function(net, data) {
   predict.labels = max.col(out.last.active, "first") - 1;
   probs <- out.last.active / rowSums(out.last.active)
   
-  return(list("labels" = predict.labels, "probs" = probs))
+  return(list("labels" = predict.labels, "probs" = probs, "lastact" = out.last.active))
 }
 
 evaluate <- function(predicted.labels, probs, labels, i.class) {
