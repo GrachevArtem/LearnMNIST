@@ -8,6 +8,8 @@ source("NeuralNets.R")
 source("Train.R")
 source("Test.R")
 
+
+
 # load training data from files
 data <- loadMNISTData("/home/artem/advanced_topics_in_ml/mnist/train-images.idx3-ubyte", 
                       "/home/artem/advanced_topics_in_ml/mnist/train-labels.idx1-ubyte")
@@ -26,15 +28,18 @@ print("Class label:"); print(trainLabels[n])
 dim(trainData[n, ])
 
 # train a model
-
-system.time( classifier <- learnModel(data = trainData, labels = trainLabels) )
+#system.time( classifier <- learnModel(data = trainData, labels = trainLabels) )
+system.time( classifier <- learnModelStoch(data = trainData, labels = trainLabels) )
+saveNetCSV(classifier, "net_200")
+#classifier.t <- readNetCSV("net_200", 2)
 predicted <- testModel(classifier, trainData)
+
 
 #calculate accuracy on training data
 print("accuracy on training data: \n")
 print(sum(predicted$labels == trainLabels)/length(trainLabels))
 
-i.class = 3
+i.class = 9
 evaluate(predicted$labels, predicted$probs, trainLabels, i.class)
 
 #calculate the following error metric for each class obtained on the train data:
@@ -53,6 +58,8 @@ print(dim(testLabels))
 #trainingData should be 10000x786,  10000 data and 784 features (28x28), tha matrix trainData has 10000 rows and 784 columns
 #trainingLabels should have 10000x1, one class label \in {0,1,...9} for each data.
 
+
+#classifier <- readNetCSV("net_200_50", 2)
 predicted <- testModel(classifier, testData)
 
 

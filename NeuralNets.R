@@ -15,14 +15,14 @@ createNet <- function(layers){
 
 activationFunc <- function(x) { 
   
-  abs.tol = 1e-6;
-  z <- 1/(1 + exp(-x));
+  abs.tol = 1e-6
+  z <- 1/(1 + exp(-x))
   
-  #z[z == 1] <- 1 - abs.tol;
-  #z[z == 0] <- 0 + abs.tol;
+  z[z == 1] <- 1 - abs.tol
+  z[z == 0] <- 0 + abs.tol
   
-  z[z > 0.5] <- 1;
-  z[z <= 0.5] < 0;
+  #z[z > 0.5] <- 1;
+  #z[z <= 0.5] < 0;
   
   return(z)
 }
@@ -31,6 +31,10 @@ activationFunc <- function(x) {
 derActivationFunc <- function(x) { 
   
   z <- (1/(1+exp(-x)))*(1-(1/(1 + exp(-x))));
+  
+  abs.tol = 1e-6
+  z[z == 1] <- 1 - abs.tol
+  z[z == 0] <- 0 + abs.tol
   
   return (z);
   
@@ -88,18 +92,19 @@ costRegul <- function(net, lambda) {
   
   regValue = 0;
   
-  #n.params = 0;
+  n.params = 0;
   
   for (i in 1 : length(net)) { 
     
     cur.layer = net[[i]];
     cur.layer = cur.layer*cur.layer;
-    regValue = regValue +sum(cur.layer[, 2:dim(cur.layer)[2]]);
+    regValue = regValue + sum(cur.layer[, 2:dim(cur.layer)[2]]);
+    n.params = n.params + length(cur.layer[, 2:dim(cur.layer)[2]]);
     #n.params = n.params + length(cur.layer[, 2:dim(cur.layer)[2]])
     
   }
   
-  return (regValue);
+  return (lambda*regValue/n.params);
   
 }
 
@@ -110,12 +115,12 @@ costTotal <- function(net, sample, labels, lambda) {
   
   output.last.active = out.run[[2]][[length(net) + 1]]
   
-  n.samples = length(labels);
+  n.samples <- dim(sample)[1];
   cost.error <- costError2(output.last.active, labels);
   regul.val <- costRegul(net, lambda);
   
-  return (cost.error/n.samples + regul.val/n.samples)
-  
+  #return (cost.error/n.samples + regul.val/n.samples)
+  return (cost.error/n.samples + regul.val)
 }
 
 
@@ -183,4 +188,24 @@ backProp <- function(net, sample, labels, lambda) {
   
 }
 
+saveNetCSV <- function(net, filename) { 
+  
+  for (i in 1 : length(net)) { 
+    filename.i = paste0(filename, "_l", i, ".csv")
+    write.csv(net[[i]], filename.i)
+  }
+  
+  return(0)
+}
 
+readNetCSV <- function(filename.base, n.layers) {
+  
+  net <- list();
+  for (i in 1 : n.layers) { 
+    filename.i = paste0(filename.base, "_l", i, ".csv")
+    net[[i]] <- read.csv(filename.i, row.names=1)
+  }
+
+  return(net)
+  
+}

@@ -3,6 +3,8 @@ library(ROCR)
 
 testModel <- function(net, data) {
   
+  data = data/255
+  
   len.net <- length(net) + 1;
   out.net <- runAll(net, data);
   

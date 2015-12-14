@@ -13,8 +13,8 @@ learnModel <- function(data, labels) {
   
   
   for ( i in 1 : 10 ) { 
-    labels.class[labels.class[, i] == i - 1] = -1
-    labels.class[labels.class[, i] != -1] = 0
+    labels.class[, i][labels.class[, i] == i - 1] = -1
+    labels.class[, i][labels.class[, i] != -1] = 0
   }
   
   labels.class[labels.class == -1] = 1
@@ -23,7 +23,7 @@ learnModel <- function(data, labels) {
   net <- createNet(c(784, 250, 10))
   #net <- createNet(c(784, 75, 50, 25, 10))
   
-  for (i in 1 : 400) { 
+  for (i in 1 : 10) { 
     
     costTrain = costTotal(net, data, labels.class, lambda)
     #costTest = costTotal(net, testData, testLabels, lambda)
@@ -52,7 +52,13 @@ learnModel <- function(data, labels) {
 learnModelStoch <- function(data, labels) { 
   
   alfa = 0.2
-  lambda = 0.01
+  lambda = 0.00
+  
+  #shuffle data
+  set.seed(5)
+  data <- data[sample(nrow(data)),]
+  set.seed(5)
+  labels <-sample(labels)
   
   data = data/255;
   labels.class = labels
@@ -63,14 +69,14 @@ learnModelStoch <- function(data, labels) {
   
   
   for ( i in 1 : 10 ) { 
-    labels.class[labels.class[, i] == i - 1] = -1
-    labels.class[labels.class[, i] != -1] = 0
+    labels.class[, i][labels.class[, i] == i - 1] = -1
+    labels.class[, i][labels.class[, i] != -1] = 0
   }
   
   labels.class[labels.class == -1] = 1
   
   
-  net <- createNet(c(784, 75, 50, 25, 10))
+  net <- createNet(c(784, 200, 10))
   
   
   for (i in 1 : 10) { 
