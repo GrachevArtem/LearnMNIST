@@ -30,9 +30,9 @@ dim(trainData[n, ])
 # train a model
 #system.time( classifier <- learnModel(data = trainData, labels = trainLabels) )
 system.time( classifier <- learnModelStoch(data = trainData, labels = trainLabels) )
-saveNetCSV(classifier, "net_200")
-#classifier.t <- readNetCSV("net_200", 2)
-predicted <- testModel(classifier, trainData)
+#saveNetCSV(classifier, "net_230_50")
+classifier.t <- readNetCSV("net_230_50", 3)
+predicted <- testModel(classifier.t, trainData)
 
 
 #calculate accuracy on training data
@@ -60,7 +60,7 @@ print(dim(testLabels))
 
 
 #classifier <- readNetCSV("net_200_50", 2)
-predicted <- testModel(classifier, testData)
+predicted <- testModel(classifier.t, testData)
 
 
 #calculate accuracy

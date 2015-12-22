@@ -1,4 +1,6 @@
 createNet <- function(layers){
+  #Creating net
+  #layers is a array of number neurons for each layer of net
   
   net <- list();
   
@@ -14,24 +16,21 @@ createNet <- function(layers){
 
 
 activationFunc <- function(x) { 
+  #Function using for activation
   
   abs.tol = 1e-6
   z <- 1/(1 + exp(-x))
-  
   z[z == 1] <- 1 - abs.tol
   z[z == 0] <- 0 + abs.tol
-  
-  #z[z > 0.5] <- 1;
-  #z[z <= 0.5] < 0;
   
   return(z)
 }
 
 
 derActivationFunc <- function(x) { 
+  #Derivative of activation function
   
   z <- (1/(1+exp(-x)))*(1-(1/(1 + exp(-x))));
-  
   abs.tol = 1e-6
   z[z == 1] <- 1 - abs.tol
   z[z == 0] <- 0 + abs.tol
@@ -41,6 +40,7 @@ derActivationFunc <- function(x) {
 }
 
 runAll <- function(net, sample){
+  #Function compute forward step 
   
   output.i <- list()
   output.i.active <- list()
@@ -69,8 +69,7 @@ runAll <- function(net, sample){
 }
 
 costError <- function(output.last.active, labels) { 
-  
-  # logloss metric
+  #Cost function, logloss metric
   logH <- log(output.last.active)
   #log1H <- 1 - logH
   
@@ -83,13 +82,13 @@ costError <- function(output.last.active, labels) {
 
 
 costError2 <- function(output.last.active, labels) { 
-  
+  #Cost function, simple rmse-like metric
   return ( sum( (output.last.active - labels)*(output.last.active - labels) ) )
   
 }
 
 costRegul <- function(net, lambda) { 
-  
+  #Cost of regularization 
   regValue = 0;
   
   n.params = 0;
@@ -100,7 +99,6 @@ costRegul <- function(net, lambda) {
     cur.layer = cur.layer*cur.layer;
     regValue = regValue + sum(cur.layer[, 2:dim(cur.layer)[2]]);
     n.params = n.params + length(cur.layer[, 2:dim(cur.layer)[2]]);
-    #n.params = n.params + length(cur.layer[, 2:dim(cur.layer)[2]])
     
   }
   
@@ -110,6 +108,7 @@ costRegul <- function(net, lambda) {
 
 
 costTotal <- function(net, sample, labels, lambda) { 
+  #Total cost function error and regularization 
   
   out.run <- runAll(net, sample)
   
@@ -119,7 +118,6 @@ costTotal <- function(net, sample, labels, lambda) {
   cost.error <- costError2(output.last.active, labels);
   regul.val <- costRegul(net, lambda);
   
-  #return (cost.error/n.samples + regul.val/n.samples)
   return (cost.error/n.samples + regul.val)
 }
 
@@ -130,6 +128,7 @@ costTotal <- function(net, sample, labels, lambda) {
 
 
 backProp <- function(net, sample, labels, lambda) { 
+  #Back propagation step
   
   length.net = length(net)
   net.delta <- net
@@ -139,7 +138,6 @@ backProp <- function(net, sample, labels, lambda) {
   }
   
   n.samples <- dim(sample)[1];
-  
   
   forward.out <- runAll(net, sample)
   forward.list <- forward.out[[1]]
@@ -161,12 +159,10 @@ backProp <- function(net, sample, labels, lambda) {
         cur.output <- cbind( 1, t(cur.output), deparse.level = 0 ); 
         
         delta[[i]] <- t(net[[i]]) %*% (delta[[i + 1]]) * t(derActivationFunc(cur.output))
-        
-        
+    
         delta[[i]] <- delta[[i]][2:length(delta[[i]])]
         
       }
-      
       
       net.delta[[i]] <- net.delta[[i]] + matrix(delta[[i+1]]) %*% forward.active.list[[i]][i.sample, ]
     }
@@ -176,11 +172,11 @@ backProp <- function(net, sample, labels, lambda) {
   for (i in 1 : length(net.delta)){
     
     net.delta[[i]] <- net.delta[[i]]/n.samples
-    
+
     #regularization
-    net.delta[[i]][,1:dim(net.delta[[i]])[2]] <- 
-      net.delta[[i]][,1:dim(net.delta[[i]])[2]] +
-      net[[i]][,1:dim(net.delta[[i]])[2]] * (lambda/2/n.samples) 
+    net.delta[[i]][,2:dim(net.delta[[i]])[2]] <- 
+      net.delta[[i]][,2:dim(net.delta[[i]])[2]] +
+      net[[i]][,2:dim(net.delta[[i]])[2]] * (lambda/2/n.samples) 
     
   }
   
@@ -189,23 +185,20 @@ backProp <- function(net, sample, labels, lambda) {
 }
 
 saveNetCSV <- function(net, filename) { 
-  
+  #Saving net into files
   for (i in 1 : length(net)) { 
     filename.i = paste0(filename, "_l", i, ".csv")
     write.csv(net[[i]], filename.i)
   }
-  
   return(0)
 }
 
 readNetCSV <- function(filename.base, n.layers) {
-  
+  #Reading net from files
   net <- list();
   for (i in 1 : n.layers) { 
     filename.i = paste0(filename.base, "_l", i, ".csv")
     net[[i]] <- read.csv(filename.i, row.names=1)
   }
-
   return(net)
-  
 }

@@ -1,5 +1,7 @@
 
 learnModel <- function(data, labels) { 
+  #function for learn model with gradient descent
+  #alfa is rate of learning
   
   alfa = 0.5
   lambda = 0.05
@@ -11,14 +13,12 @@ learnModel <- function(data, labels) {
     labels.class = cbind(labels.class, labels, deparse.level = 0)
   }
   
-  
   for ( i in 1 : 10 ) { 
     labels.class[, i][labels.class[, i] == i - 1] = -1
     labels.class[, i][labels.class[, i] != -1] = 0
   }
   
   labels.class[labels.class == -1] = 1
-  
   
   net <- createNet(c(784, 250, 10))
   #net <- createNet(c(784, 75, 50, 25, 10))
@@ -76,10 +76,10 @@ learnModelStoch <- function(data, labels) {
   labels.class[labels.class == -1] = 1
   
   
-  net <- createNet(c(784, 200, 10))
+  net <- createNet(c(784, 230, 50, 10))
   
   
-  for (i in 1 : 10) { 
+  for (i in 1 : 200) { 
   
     costTrain = costTotal(net, data, labels.class, lambda)
     #costTest = costTotal(net, testData, testLabels, lambda)

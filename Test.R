@@ -2,7 +2,7 @@ library(pROC)
 library(ROCR)
 
 testModel <- function(net, data) {
-  
+  #function for testing model
   data = data/255
   
   len.net <- length(net) + 1;
@@ -17,7 +17,7 @@ testModel <- function(net, data) {
 }
 
 evaluate <- function(predicted.labels, probs, labels, i.class) {
-  
+  #Evaluate quality of classification
   if (i.class == 0) { 
     labels[labels == i.class] <- -1
     labels[labels > i.class] <- 0
@@ -57,7 +57,6 @@ evaluate <- function(predicted.labels, probs, labels, i.class) {
     
   #calc Roc
   probs.i = probs[, i.class + 1]
-  
   
   pred <- prediction(probs.i, labels)
   perf <- performance(pred,"tpr","fpr")
